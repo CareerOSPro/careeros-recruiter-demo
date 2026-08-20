@@ -1,0 +1,1663 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxOTIgMTkyIj48cmVjdCB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgZmlsbD0iIzJDMUEwOCIgcng9IjI4Ii8+PHBhdGggZD0iTSAzOCAzMCBMIDE1NCAzMCBMIDE2MiAzOCBMIDE2MiA2MiBMIDYyIDYyIEwgNjIgMTMwIEwgMTYyIDEzMCBMIDE2MiAxNTQgTCAxNTQgMTYyIEwgMzggMTYyIEwgMzAgMTU0IEwgMzAgMzggWiIgZmlsbD0iI0M0NzgzQSIvPjwvc3ZnPg==" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#2C1A08" />
+<meta name="description" content="Interactive portfolio demonstration of CareerOS, a job search operating system. Fictional data throughout. Runs entirely in your browser." />
+<meta name="robots" content="index, follow" />
+<title>CareerOS - Interactive Demo (Fictional Data)</title>
+<!-- No web fonts, no analytics, no third-party resources of any kind. This
+     page issues zero network requests after it loads. -->
+<style>
+/* ==========================================================================
+   CareerOS - Public Recruiter Demo
+   Design tokens are carried over unchanged from the CareerOS design system so
+   the public build keeps the product's visual identity. No web fonts are
+   requested: every family falls back to a system stack.
+   ========================================================================== */
+*{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --font-body:system-ui,-apple-system,'Segoe UI',sans-serif;
+  --font-heading:Georgia,'Times New Roman',serif;
+  --font-mono:'SF Mono',Consolas,'Liberation Mono',monospace;
+
+  --surface:#FFFFFF;
+  --surface-2:#FAFAFA;
+  --border-soft:#EDE4D4;
+  --border-divider:#F5F0E8;
+  --warm-900:#2C1A08;--warm-700:#6B4423;--warm-500:#9C8B78;
+  --warm-400:#B5A38E;--warm-300:#DDD0B8;--warm-200:#E8DDC8;
+  --warm-100:#F5F0E8;--warm-50:#FDFAF6;
+  --accent:#C4783A;--accent-dark:#A0601E;--accent-bg:#F7E8D8;--gold:#E8B84B;
+  --green:#3B6D11;--green-bg:#EDF6E5;--green-border:#BBF7D0;
+  --blue:#185FA5;--blue-bg:#EBF4FD;--blue-border:#BFDBFE;
+  --red:#B91C1C;--red-bg:#FEF2F2;--red-border:#FECACA;
+  --amber:#B45309;--amber-bg:#FFFBEB;--amber-border:#FDE68A;
+  --purple:#534AB7;--purple-bg:#F0EFFD;--purple-border:#C4B5FD;
+
+  --radius:10px;
+  --shadow:0 1px 2px rgba(44,26,8,.06),0 8px 24px rgba(44,26,8,.06);
+}
+
+html{-webkit-text-size-adjust:100%}
+body{
+  font-family:var(--font-body);
+  color:var(--warm-900);
+  background:var(--warm-50);
+  line-height:1.55;
+  font-size:15px;
+  padding-bottom:env(safe-area-inset-bottom);
+}
+h1,h2,h3,h4{font-family:var(--font-heading);font-weight:600;line-height:1.25}
+button{font:inherit;color:inherit;cursor:pointer;border:none;background:none}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+
+/* --- fiction banner ------------------------------------------------------ */
+.fiction-banner{
+  background:var(--warm-900);color:var(--warm-100);
+  font-size:12.5px;letter-spacing:.01em;
+  padding:9px 20px;text-align:center;
+}
+.fiction-banner strong{color:var(--gold);font-weight:600}
+
+/* --- top bar ------------------------------------------------------------- */
+.topbar{
+  position:sticky;top:0;z-index:40;
+  background:var(--surface);border-bottom:1px solid var(--border-soft);
+  display:flex;align-items:center;gap:14px;
+  padding:12px 20px;
+}
+.brand{display:flex;align-items:center;gap:11px;min-width:0}
+.brand-mark{
+  width:34px;height:34px;border-radius:8px;background:var(--warm-900);
+  display:grid;place-items:center;flex:none;
+}
+.brand-mark svg{width:20px;height:20px;display:block}
+.brand-text{min-width:0}
+.brand-name{font-family:var(--font-heading);font-size:17px;font-weight:600;line-height:1.1}
+.brand-sub{font-size:11.5px;color:var(--warm-500);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.demo-chip{
+  font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--accent-dark);background:var(--accent-bg);border:1px solid var(--warm-300);
+  padding:3px 8px;border-radius:999px;white-space:nowrap;flex:none;
+}
+.topbar-actions{margin-left:auto;display:flex;align-items:center;gap:8px;flex:none}
+
+.btn{
+  border-radius:8px;padding:8px 14px;font-size:13.5px;font-weight:600;
+  border:1px solid var(--border-soft);background:var(--surface);color:var(--warm-700);
+  transition:background .15s,border-color .15s,color .15s;white-space:nowrap;
+}
+.btn:hover{background:var(--warm-100);border-color:var(--warm-300)}
+.btn-primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn-primary:hover{background:var(--accent-dark);border-color:var(--accent-dark);color:#fff}
+.btn-sm{padding:5px 10px;font-size:12.5px;border-radius:7px}
+
+/* --- flow rail ----------------------------------------------------------- */
+.flowrail-wrap{background:var(--surface);border-bottom:1px solid var(--border-soft);position:sticky;top:59px;z-index:35}
+.flowrail{
+  display:flex;gap:6px;padding:10px 20px;
+  overflow-x:auto;scrollbar-width:thin;-webkit-overflow-scrolling:touch;
+}
+.flowstep{
+  display:flex;align-items:center;gap:8px;flex:none;
+  padding:7px 13px 7px 9px;border-radius:999px;
+  border:1px solid var(--border-soft);background:var(--surface);
+  font-size:13px;font-weight:600;color:var(--warm-500);
+  transition:all .15s;
+}
+.flowstep:hover{background:var(--warm-100);color:var(--warm-700)}
+.flowstep .n{
+  width:21px;height:21px;border-radius:50%;flex:none;
+  display:grid;place-items:center;
+  font-size:11px;font-weight:700;font-family:var(--font-mono);
+  background:var(--warm-100);color:var(--warm-500);border:1px solid var(--border-soft);
+}
+.flowstep[aria-current="step"]{background:var(--warm-900);border-color:var(--warm-900);color:#fff}
+.flowstep[aria-current="step"] .n{background:var(--accent);color:#fff;border-color:var(--accent)}
+
+/* --- layout -------------------------------------------------------------- */
+.stage{max-width:1180px;margin:0 auto;padding:22px 20px 60px}
+.panel{display:none}
+.panel.active{display:block;animation:fade .18s ease-out}
+@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+
+.panel-head{margin-bottom:18px}
+.panel-eyebrow{
+  font-size:11px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;
+  color:var(--accent-dark);margin-bottom:5px;
+}
+.panel-head h2{font-size:24px;margin-bottom:6px}
+.panel-head p{color:var(--warm-700);max-width:70ch;font-size:14px}
+
+.grid{display:grid;gap:14px}
+.grid-2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.grid-3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.grid-side{grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);align-items:start}
+
+.card{
+  background:var(--surface);border:1px solid var(--border-soft);
+  border-radius:var(--radius);padding:16px;box-shadow:var(--shadow);
+}
+.card h3{font-size:16px;margin-bottom:4px}
+.card-label{
+  font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;
+  color:var(--warm-500);margin-bottom:9px;
+}
+
+/* --- fixture disclosure -------------------------------------------------- */
+.fixture-note{
+  display:flex;gap:9px;align-items:flex-start;
+  background:var(--warm-50);border:1px dashed var(--warm-300);
+  border-radius:8px;padding:10px 12px;
+  font-size:12.5px;color:var(--warm-700);line-height:1.5;
+}
+.fixture-note .ico{flex:none;font-size:13px;line-height:1.35}
+.fixture-note b{color:var(--warm-900);font-weight:700}
+
+/* --- filters ------------------------------------------------------------- */
+.filterbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:14px}
+.filterbar .lab{font-size:12px;font-weight:700;color:var(--warm-500);text-transform:uppercase;letter-spacing:.06em}
+.chip{
+  border:1px solid var(--border-soft);background:var(--surface);
+  border-radius:999px;padding:5px 12px;font-size:12.5px;font-weight:600;color:var(--warm-700);
+}
+.chip:hover{background:var(--warm-100)}
+.chip[aria-pressed="true"]{background:var(--warm-900);border-color:var(--warm-900);color:#fff}
+
+/* --- job cards ----------------------------------------------------------- */
+.joblist{display:grid;gap:11px}
+.jobcard{
+  background:var(--surface);border:1px solid var(--border-soft);border-radius:var(--radius);
+  padding:14px;display:flex;gap:14px;align-items:flex-start;text-align:left;width:100%;
+  transition:border-color .15s,box-shadow .15s;
+}
+.jobcard:hover{border-color:var(--warm-300);box-shadow:var(--shadow)}
+.jobcard[aria-selected="true"]{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-bg)}
+.jobcard-main{flex:1;min-width:0}
+/* These are spans inside a button, so each needs an explicit block display or
+   the title and company render on one run-together line. */
+.jobcard-title{display:block;font-family:var(--font-heading);font-size:15.5px;font-weight:600;margin-bottom:2px}
+.jobcard-co{display:block;font-size:13px;color:var(--warm-700);margin-bottom:7px}
+.meta{display:flex;flex-wrap:wrap;gap:6px}
+.tag{
+  font-size:11.5px;font-weight:600;padding:2px 8px;border-radius:6px;
+  background:var(--warm-100);color:var(--warm-700);border:1px solid var(--border-divider);
+  white-space:nowrap;
+}
+.tag-green{background:var(--green-bg);color:var(--green);border-color:var(--green-border)}
+.tag-blue{background:var(--blue-bg);color:var(--blue);border-color:var(--blue-border)}
+.tag-amber{background:var(--amber-bg);color:var(--amber);border-color:var(--amber-border)}
+.tag-red{background:var(--red-bg);color:var(--red);border-color:var(--red-border)}
+.tag-purple{background:var(--purple-bg);color:var(--purple);border-color:var(--purple-border)}
+
+/* --- score dial ---------------------------------------------------------- */
+.score-badge{
+  flex:none;width:56px;height:56px;border-radius:50%;
+  display:grid;place-items:center;position:relative;
+}
+.score-badge::after{content:"";position:absolute;inset:5px;border-radius:50%;background:var(--surface)}
+.score-badge span{position:relative;z-index:1;font-family:var(--font-mono);font-size:15px;font-weight:700}
+
+.dim{margin-bottom:11px}
+.dim-head{display:flex;justify-content:space-between;font-size:12.5px;font-weight:600;margin-bottom:4px}
+.dim-head span:last-child{font-family:var(--font-mono);color:var(--warm-700)}
+.bar{height:6px;border-radius:999px;background:var(--warm-100);overflow:hidden}
+.bar i{display:block;height:100%;border-radius:999px;background:var(--accent)}
+.bar.good i{background:var(--green)}
+.bar.weak i{background:var(--amber)}
+
+.skillrow{display:flex;flex-wrap:wrap;gap:5px;margin-top:5px}
+
+/* --- pipeline board ------------------------------------------------------ */
+.board{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px;align-items:start}
+.col{background:var(--warm-100);border:1px solid var(--border-divider);border-radius:9px;padding:9px;min-height:110px}
+.col-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.col-name{font-size:11.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--warm-700)}
+.col-count{font-family:var(--font-mono);font-size:11.5px;color:var(--warm-500)}
+.pcard{
+  background:var(--surface);border:1px solid var(--border-soft);border-radius:7px;
+  padding:9px;margin-bottom:7px;width:100%;text-align:left;
+}
+.pcard:hover{border-color:var(--warm-300)}
+.pcard[aria-selected="true"]{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-bg)}
+.pcard-co{display:block;font-size:12.5px;font-weight:700;line-height:1.25}
+.pcard-title{display:block;font-size:11.5px;color:var(--warm-500);margin:2px 0 6px;line-height:1.3}
+.pcard-foot{display:flex;justify-content:space-between;align-items:center;gap:6px}
+.days{font-family:var(--font-mono);font-size:10.5px;color:var(--warm-500)}
+.advance{
+  font-size:11px;font-weight:700;color:var(--accent-dark);
+  border:1px solid var(--warm-300);border-radius:5px;padding:1px 6px;background:var(--surface);
+}
+.advance:hover{background:var(--accent-bg)}
+
+/* --- tailor diff --------------------------------------------------------- */
+.bullets{list-style:none;display:grid;gap:9px}
+.bullets li{
+  font-size:13.5px;line-height:1.55;padding:10px 12px;border-radius:8px;
+  background:var(--warm-50);border:1px solid var(--border-divider);
+}
+.bullets li.changed{background:var(--green-bg);border-color:var(--green-border)}
+.bullets li.changed::before{
+  content:"TAILORED";display:block;font-size:9.5px;font-weight:800;letter-spacing:.09em;
+  color:var(--green);margin-bottom:4px;
+}
+.bullets li mark{background:rgba(232,184,75,.38);color:inherit;border-radius:3px;padding:0 2px}
+.rationale{font-size:12.5px;color:var(--warm-700);border-left:3px solid var(--warm-300);padding-left:11px;margin-top:12px}
+
+/* --- bundle -------------------------------------------------------------- */
+.checklist{list-style:none;display:grid;gap:8px}
+.checklist li{display:flex;gap:9px;align-items:flex-start;font-size:13.5px}
+.checklist .box{
+  flex:none;width:17px;height:17px;border-radius:5px;margin-top:1px;
+  display:grid;place-items:center;font-size:10.5px;font-weight:800;
+  background:var(--green-bg);color:var(--green);border:1px solid var(--green-border);
+}
+.checklist .box.off{background:var(--warm-100);color:var(--warm-400);border-color:var(--border-soft)}
+.doc-preview{
+  background:var(--surface);border:1px solid var(--border-soft);border-radius:8px;
+  padding:20px;font-size:12.5px;line-height:1.65;max-height:430px;overflow:auto;
+}
+.doc-preview h4{font-size:15px;margin-bottom:2px}
+.doc-preview .doc-meta{color:var(--warm-500);font-size:11.5px;margin-bottom:12px}
+.doc-preview .doc-sec{
+  font-size:10.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--accent-dark);border-bottom:1px solid var(--border-soft);
+  padding-bottom:3px;margin:14px 0 8px;
+}
+.doc-preview ul{margin-left:16px}
+.doc-preview li{margin-bottom:5px}
+.doc-preview p{margin-bottom:9px}
+
+/* --- follow up / interview ----------------------------------------------- */
+.row{
+  display:flex;gap:12px;align-items:flex-start;
+  padding:12px 0;border-bottom:1px solid var(--border-divider);
+}
+.row:last-child{border-bottom:none}
+.row-main{flex:1;min-width:0}
+.row-title{font-size:14px;font-weight:600;line-height:1.3}
+.row-sub{font-size:12.5px;color:var(--warm-500);margin-top:2px}
+.row-actions{flex:none;display:flex;gap:6px;align-items:center}
+.when{
+  font-family:var(--font-mono);font-size:11px;font-weight:700;
+  padding:3px 8px;border-radius:6px;white-space:nowrap;
+  background:var(--warm-100);color:var(--warm-700);border:1px solid var(--border-divider);
+}
+.when.due{background:var(--red-bg);color:var(--red);border-color:var(--red-border)}
+.when.soon{background:var(--amber-bg);color:var(--amber);border-color:var(--amber-border)}
+.done-mark{font-size:12px;font-weight:700;color:var(--green)}
+
+.story{border:1px solid var(--border-soft);border-radius:9px;overflow:hidden;margin-bottom:9px;background:var(--surface)}
+.story-head{width:100%;text-align:left;padding:12px 14px;display:flex;gap:11px;align-items:flex-start}
+.story-head:hover{background:var(--warm-50)}
+.story-head .t{flex:1;min-width:0}
+.story-head .t{display:block}
+.story-title{display:block;font-size:14px;font-weight:600;line-height:1.3}
+.story-metric{display:block;font-size:12px;color:var(--green);font-weight:600;margin-top:3px}
+.story-body{padding:0 14px 14px;border-top:1px solid var(--border-divider);display:none}
+.story.open .story-body{display:block}
+.star-part{margin-top:11px}
+.star-key{
+  font-size:10.5px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;
+  color:var(--accent-dark);margin-bottom:3px;
+}
+.star-part p{font-size:13px;line-height:1.6;color:var(--warm-900)}
+.caret{flex:none;color:var(--warm-400);font-size:12px;transition:transform .15s;margin-top:3px}
+.story.open .caret{transform:rotate(90deg)}
+
+/* --- measure ------------------------------------------------------------- */
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:11px;margin-bottom:16px}
+.kpi{background:var(--surface);border:1px solid var(--border-soft);border-radius:var(--radius);padding:14px}
+.kpi-v{font-family:var(--font-mono);font-size:26px;font-weight:700;line-height:1.1}
+.kpi-l{font-size:12px;color:var(--warm-500);margin-top:3px}
+.kpi-d{font-size:11.5px;color:var(--warm-700);margin-top:6px}
+.funnel{display:grid;gap:7px}
+.fstep{display:flex;align-items:center;gap:11px}
+.fstep-l{width:88px;flex:none;font-size:12.5px;font-weight:600;color:var(--warm-700)}
+.fstep-bar{flex:1;height:26px;border-radius:6px;background:var(--warm-100);overflow:hidden}
+.fstep-bar i{display:block;height:100%;background:var(--accent);border-radius:6px;min-width:2px}
+.fstep-n{flex:none;width:26px;text-align:right;font-family:var(--font-mono);font-size:13px;font-weight:700}
+
+/* --- portfolio ----------------------------------------------------------- */
+.portfolio{border-top:1px solid var(--border-soft);background:var(--surface);margin-top:40px;padding:34px 20px 44px}
+.portfolio-inner{max-width:1180px;margin:0 auto}
+.portfolio h2{font-size:20px;margin-bottom:5px}
+.portfolio .lede{color:var(--warm-700);font-size:13.5px;margin-bottom:18px;max-width:70ch}
+.slots{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}
+.slot{border:1px solid var(--border-soft);border-radius:var(--radius);padding:16px;background:var(--surface)}
+.slot.current{border-color:var(--accent);background:var(--warm-50)}
+.slot.pending{border-style:dashed;background:var(--warm-50)}
+.slot-status{
+  font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;
+  padding:2px 7px;border-radius:999px;display:inline-block;margin-bottom:8px;
+}
+.slot.current .slot-status{background:var(--accent);color:#fff}
+.slot.pending .slot-status{background:var(--warm-200);color:var(--warm-700)}
+.slot h3{font-size:15.5px;margin-bottom:4px}
+.slot p{font-size:13px;color:var(--warm-700)}
+
+/* --- contact ------------------------------------------------------------- */
+.contact{background:var(--warm-900);color:var(--warm-100);padding:34px 20px 40px}
+.contact-inner{max-width:1180px;margin:0 auto;display:flex;gap:26px;align-items:center;flex-wrap:wrap}
+.contact-copy{flex:1;min-width:260px}
+.contact h2{color:#fff;font-size:21px;margin-bottom:6px}
+.contact p{font-size:13.5px;color:var(--warm-300);max-width:62ch}
+.contact-actions{flex:none;display:flex;flex-direction:column;gap:9px;min-width:250px}
+.contact-line{
+  display:flex;align-items:center;gap:9px;justify-content:space-between;
+  background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.16);
+  border-radius:8px;padding:9px 12px;font-size:13px;
+}
+.contact-line .v{font-family:var(--font-mono);font-size:12.5px;color:#fff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.copy-btn{
+  flex:none;font-size:11.5px;font-weight:700;padding:3px 9px;border-radius:6px;
+  background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.2);
+}
+.copy-btn:hover{background:rgba(255,255,255,.22)}
+
+/* --- footer -------------------------------------------------------------- */
+.foot{
+  background:var(--warm-900);color:var(--warm-500);font-size:11.5px;
+  padding:0 20px 26px;text-align:center;line-height:1.7;
+}
+.foot-inner{max-width:1180px;margin:0 auto;border-top:1px solid rgba(255,255,255,.1);padding-top:18px}
+
+/* --- toast --------------------------------------------------------------- */
+.toast{
+  position:fixed;left:50%;bottom:22px;transform:translate(-50%,14px);
+  background:var(--warm-900);color:#fff;font-size:13px;font-weight:600;
+  /* The footer is also warm-900, so the toast needs its own edge to stay
+     legible when it fires while that section is on screen. */
+  border:1px solid rgba(255,255,255,.28);
+  padding:10px 17px;border-radius:9px;box-shadow:0 8px 28px rgba(44,26,8,.45);
+  opacity:0;pointer-events:none;transition:opacity .18s,transform .18s;z-index:90;
+  max-width:calc(100vw - 32px);text-align:center;
+}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+
+.empty{padding:26px;text-align:center;color:var(--warm-500);font-size:13.5px}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+/* --- responsive ---------------------------------------------------------- */
+@media (max-width:1000px){
+  .board{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .slots{grid-template-columns:1fr}
+}
+@media (max-width:820px){
+  .grid-2,.grid-3,.grid-side{grid-template-columns:1fr}
+}
+@media (max-width:620px){
+  body{font-size:14.5px}
+  .topbar{flex-wrap:wrap;gap:10px;padding:10px 14px}
+  .brand-sub{display:none}
+  .topbar-actions{width:100%;margin-left:0}
+  .topbar-actions .btn{flex:1}
+  .flowrail-wrap{position:static}
+  .flowrail{padding:9px 14px}
+  .stage{padding:18px 14px 44px}
+  .board{grid-template-columns:1fr}
+  .col{min-height:0}
+  .panel-head h2{font-size:20px}
+  .jobcard{gap:11px}
+  .score-badge{width:48px;height:48px}
+  .contact-inner{flex-direction:column;align-items:stretch}
+  .contact-actions{min-width:0}
+  .fstep-l{width:70px;font-size:11.5px}
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+}
+
+</style>
+</head>
+<body>
+<div class="fiction-banner">
+  <strong>Demonstration only.</strong>
+  Every person, company, role and interview on this page is fictional. No real candidate data, and
+  nothing here connects to a live job board, employer or mailbox.
+</div>
+
+<header class="topbar">
+  <div class="brand">
+    <span class="brand-mark" aria-hidden="true">
+      <svg viewBox="0 0 192 192"><path d="M 38 30 L 154 30 L 162 38 L 162 62 L 62 62 L 62 130 L 162 130 L 162 154 L 154 162 L 38 162 L 30 154 L 30 38 Z" fill="#C4783A"/></svg>
+    </span>
+    <span class="brand-text">
+      <span class="brand-name">CareerOS</span>
+      <span class="brand-sub">A job search operating system - portfolio demonstration</span>
+    </span>
+  </div>
+  <span class="demo-chip">Fictional data</span>
+  <div class="topbar-actions">
+    <button class="btn btn-sm" data-act="reset">Reset demo</button>
+    <button class="btn btn-primary btn-sm" onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'})">Contact James Bodell</button>
+  </div>
+</header>
+
+<div class="flowrail-wrap">
+  <nav class="flowrail" id="flowrail" aria-label="Demonstration steps"></nav>
+</div>
+
+<main class="stage" id="stage"></main>
+
+<section class="portfolio">
+  <div class="portfolio-inner">
+    <h2>Portfolio</h2>
+    <p class="lede">CareerOS is the first of three projects in this portfolio. The remaining two are
+    reserved below and are not part of this demonstration.</p>
+    <div class="slots">
+      <div class="slot current">
+        <span class="slot-status">Live demo</span>
+        <h3>CareerOS</h3>
+        <p>A job search operating system: discovery, match scoring, pipeline tracking, resume
+        tailoring, application bundling, follow-up cadence, interview preparation and measurement -
+        designed, built and shipped end to end.</p>
+      </div>
+      <div class="slot pending">
+        <span class="slot-status">In preparation</span>
+        <h3>Boracle</h3>
+        <p>Reserved. Not included in this demonstration.</p>
+      </div>
+      <div class="slot pending">
+        <span class="slot-status">In preparation</span>
+        <h3>Bodell Memory Studio</h3>
+        <p>Reserved. Not included in this demonstration.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="contact" id="contact">
+  <div class="contact-inner">
+    <div class="contact-copy">
+      <h2>Contact James Bodell</h2>
+      <p>This demonstration is a reduced public build of a larger product. If you would like to see
+      the full application, walk through the architecture, or talk about a role, get in touch - I am
+      happy to give a live walkthrough.</p>
+    </div>
+    <div class="contact-actions">
+      <div class="contact-line">
+        <span class="v">info@bodellbytes.com</span>
+        <button class="copy-btn" data-act="copy" data-copy="info@bodellbytes.com">Copy</button>
+      </div>
+      <div class="contact-line">
+        <span class="v">Live walkthrough on request</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="foot">
+  <div class="foot-inner">
+    <p><strong>CareerOS - public recruiter demonstration.</strong> Reduced build: this page shows how the
+    product works and omits the engines that make it commercially useful.</p>
+    <p>Runs entirely in your browser. No accounts, no tracking, no analytics, no storage, and no
+    network requests. All data is fictional.</p>
+  </div>
+</footer>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+/* ==========================================================================
+   CareerOS Public Recruiter Demo - side-effect containment
+   Installed BEFORE anything else. The reduced build has no call site that
+   reaches the network, submits an application, opens an external site or
+   sends mail; this layer is kept as defence in depth so that remains true
+   even if the page is later edited.
+   ========================================================================== */
+(function () {
+  'use strict';
+
+  var DEMO = window.CAREEROS_DEMO = {
+    build: 'CAREEROS-PUBLIC-RECRUITER-DEMO-01',
+    tier: 'public-recruiter-demo',
+    blocked: []
+  };
+
+  function note(kind, target) {
+    try {
+      DEMO.blocked.push({ kind: kind, target: String(target).slice(0, 200), at: Date.now() });
+      if (DEMO.blocked.length > 200) DEMO.blocked.shift();
+    } catch (e) {}
+  }
+
+  /* --- network: every outbound request is refused, offline-style ---------- */
+  window.fetch = function (input) {
+    var url = (input && input.url) ? input.url : input;
+    note('network', url);
+    return Promise.reject(new TypeError('Demo build: network access is disabled.'));
+  };
+
+  function DeadTransport() { throw new Error('Demo build: network access is disabled.'); }
+  try { window.XMLHttpRequest = DeadTransport; } catch (e) {}
+  try { window.WebSocket = DeadTransport; } catch (e) {}
+  try { window.EventSource = DeadTransport; } catch (e) {}
+  try {
+    if (window.navigator && navigator.sendBeacon) {
+      navigator.sendBeacon = function (u) { note('network', u); return false; };
+    }
+  } catch (e) {}
+
+  /* --- external navigation ------------------------------------------------ */
+  window.open = function (url) { note('external-link', url); return null; };
+
+  /* --- mail and form posts ------------------------------------------------ */
+  document.addEventListener('click', function (e) {
+    var a = e.target && e.target.closest ? e.target.closest('a[href]') : null;
+    if (!a) return;
+    var href = a.getAttribute('href') || '';
+    if (/^mailto:/i.test(href)) { e.preventDefault(); e.stopPropagation(); note('email', href); return; }
+    if (/^https?:/i.test(href)) { e.preventDefault(); e.stopPropagation(); note('external-link', href); return; }
+  }, true);
+
+  document.addEventListener('submit', function (e) {
+    e.preventDefault();
+    note('form-submit', (e.target && e.target.action) || 'form');
+  }, true);
+})();
+
+</script>
+<script>
+/* ==========================================================================
+   CareerOS Public Recruiter Demo - fictional dataset and precomputed fixtures
+
+   EVERY person, company, role, interview, score and document below is INVENTED
+   for demonstration. No real candidate, employer or application appears here.
+   All URLs use the RFC 6761 reserved .invalid TLD and are non-routable.
+
+   The candidate profile, roles, events, STAR stories and employment history are
+   carried over unchanged from CAREEROS-DEMO-BASELINE-01.
+
+   IMPORTANT - what the "match", "tailor", "cover" and "followup" fields are:
+   they are STORED OUTPUTS, authored by hand for this demo. The public build
+   contains no scoring engine, no resume parser, no ATS analyser and no text
+   generator. Nothing here is computed at runtime.
+   ========================================================================== */
+var DEMO_DATA = (function () {
+  'use strict';
+
+  function DAY(offset) {
+    var d = new Date();
+    d.setHours(12, 0, 0, 0);
+    d.setDate(d.getDate() + offset);
+    return d.toISOString().split('T')[0];
+  }
+
+  var PROFILE = {
+    name: 'Avery Chen',
+    headline: 'Senior Data Platform Engineer',
+    location: 'Denver, CO',
+    seniority: 'Senior',
+    target_titles: ['Senior Data Platform Engineer', 'Staff Data Engineer', 'Analytics Engineering Lead'],
+    skills: ['Python', 'SQL', 'Apache Spark', 'dbt', 'Airflow', 'Snowflake', 'AWS', 'Kafka', 'Terraform', 'Data Modeling', 'Pipeline Observability', 'Cost Optimization'],
+    salary_floor: 165000,
+    preferred_work_types: ['Remote', 'Hybrid']
+  };
+
+  /* Base resume bullets for the current role. The Tailor step diffs against
+     these; index positions are referenced by the per-role tailor fixtures. */
+  var BASE_BULLETS = [
+    'Own the ingestion and transformation platform moving 4TB/day from 30+ sources into a Snowflake lakehouse serving 380 internal users.',
+    'Cut warehouse spend 41% ($35k/month) by instrumenting query-level cost attribution and converting eleven high-cost dashboards to incremental dbt models.',
+    'Introduced schema contracts at the ingestion boundary after a silent-drift incident; three later upstream changes were caught within minutes instead of weeks.',
+    'Led the migration of 214 legacy cron ETL scripts to orchestrated, tested Airflow pipelines with zero consumer-visible downtime.',
+    'Mentor four engineers and run the platform design review.'
+  ];
+
+  var EMPLOYMENT = [
+    {
+      company: 'Brightwater Data', title: 'Senior Data Engineer', location: 'Denver, CO (Remote)',
+      start: '2022-03', end: 'Present', bullets: BASE_BULLETS
+    },
+    {
+      company: 'Meridian Commerce', title: 'Data Engineer', location: 'Denver, CO',
+      start: '2019-06', end: '2022-02',
+      bullets: [
+        'Built the Spark batch layer computing daily merchandising aggregates across 1,100 stores.',
+        'Designed the dimensional model behind the company revenue reporting suite, replacing six conflicting spreadsheet definitions with one governed metric layer.',
+        'Reduced the nightly pipeline critical path from 6.5 hours to 95 minutes by restructuring joins and partitioning strategy.'
+      ]
+    },
+    {
+      company: 'Foxglove Software', title: 'Analytics Engineer', location: 'Boulder, CO',
+      start: '2017-08', end: '2019-05',
+      bullets: [
+        'Built and maintained the dbt project powering product analytics for a 40-person SaaS company.',
+        'Instrumented the event taxonomy still in use for core product funnels.'
+      ]
+    }
+  ];
+
+  var EDUCATION = [
+    { school: 'Colorado State University', degree: 'B.S. Computer Science', start: '2013', end: '2017' }
+  ];
+
+  var JOBS = [
+    {
+      id: 'demo_job_kestrel', company: 'Kestrel Financial', title: 'Staff Data Engineer',
+      url: 'careers.example.invalid/kestrel/staff-data-engineer',
+      status: 'offer', work_type: 'Remote', source: 'Referral',
+      salary_min: 195000, salary_max: 225000, date_added: DAY(-38), days_in_stage: 3,
+      summary: 'Lead the rebuild of a risk-reporting data platform: Snowflake + dbt for 400+ internal users, 200+ Airflow DAGs to migrate, data modelling standards across four business domains, and five engineers to mentor.',
+      requirements: ['8+ years data engineering, 2+ at staff or lead level', 'Deep SQL and Python; production Spark', 'Snowflake, dbt, Airflow, Terraform, AWS', 'Warehouse cost optimization track record', 'Streaming (Kafka) and CDC ingestion'],
+      match: {
+        overall: 94,
+        dims: [
+          { k: 'Skills coverage', v: 96 }, { k: 'Seniority fit', v: 92 },
+          { k: 'Compensation', v: 100 }, { k: 'Work type', v: 100 }, { k: 'Domain overlap', v: 82 }
+        ],
+        matched: ['Snowflake', 'dbt', 'Airflow', 'Terraform', 'AWS', 'Python', 'SQL', 'Apache Spark', 'Kafka', 'Cost Optimization', 'Data Modeling'],
+        missing: ['CDC ingestion (Debezium)'],
+        read: 'The strongest match in the pipeline. Every named tool is already in the profile, the band clears the floor by $30k, and the cost-optimization requirement maps directly to the 41% reduction story.'
+      },
+      tailor: {
+        bullets: [
+          { b: 0 },
+          { t: 'Cut warehouse spend 41% ($35k/month) on a Snowflake estate by instrumenting query-level cost attribution and converting eleven high-cost dashboards to incremental dbt models.', hi: ['on a Snowflake estate'] },
+          { t: 'Introduced schema contracts at the ingestion boundary after a silent-drift incident, then extended them into data contracts with Finance and Risk consumers; three later upstream changes were caught within minutes instead of weeks.', hi: ['data contracts with Finance and Risk consumers'] },
+          { t: 'Led the migration of 214 legacy cron ETL scripts to orchestrated, tested Airflow pipelines with zero consumer-visible downtime, sequenced by consumer criticality.', hi: ['sequenced by consumer criticality'] },
+          { t: 'Mentor four engineers, run the platform design review, and wrote the migration runbook that let the team finish the last third of the work without me.', hi: ['wrote the migration runbook'] }
+        ],
+        rationale: 'Kestrel names risk and finance reporting, a 200-DAG migration and mentoring five engineers. The tailored set surfaces the data-contract work with Finance, the migration sequencing decision, and the runbook that scaled mentoring beyond one person.'
+      },
+      cover: [
+        'Your posting describes rebuilding risk reporting on Snowflake and dbt while migrating more than two hundred legacy DAGs. I have run that exact shape of project: 214 cron ETL scripts moved to orchestrated, tested pipelines over seven months with no consumer-visible downtime, using parallel running and automated output diffing rather than a cutover.',
+        'The cost requirement is the part I would want to talk about first. I cut warehouse spend 41% without retiring a single dataset, and the reason it stayed cut was a pre-merge cost check rather than a one-off cleanup.'
+      ],
+      followup: { cadence: 'Offer stage - respond within 48h', note: 'Thank them for the verbal at $205k, confirm enthusiasm, and ask for the written offer with the equity refresh detail. Flag that another process is at final stage so the timeline is honest rather than tactical.' },
+      themes: [
+        { q: 'Walk me through a platform migration you owned end to end.', story: 'demo_story_migration' },
+        { q: 'How do you get warehouse costs down without losing coverage?', story: 'demo_story_cost' },
+        { q: 'Tell me about scaling yourself through mentorship.', story: 'demo_story_migration' }
+      ]
+    },
+    {
+      id: 'demo_job_northwind', company: 'Northwind Analytics', title: 'Senior Data Platform Engineer',
+      url: 'careers.example.invalid/northwind/senior-data-platform-engineer',
+      status: 'interview', work_type: 'Remote', source: 'LinkedIn',
+      salary_min: 175000, salary_max: 205000, date_added: DAY(-24), days_in_stage: 6,
+      summary: 'Own the ingestion and transformation layer for decision tooling used by mid-market manufacturers: batch and streaming pipelines moving ~4TB/day, the dbt layer and its CI strategy, and pipeline observability from freshness through lineage.',
+      requirements: ['6+ years building production data platforms', 'Strong Python and SQL; comfortable in Spark internals', 'Airflow or Dagster in production, Terraform', 'Snowflake or BigQuery at scale', 'Clear written communication - remote, writing-first team'],
+      match: {
+        overall: 91,
+        dims: [
+          { k: 'Skills coverage', v: 94 }, { k: 'Seniority fit', v: 100 },
+          { k: 'Compensation', v: 92 }, { k: 'Work type', v: 100 }, { k: 'Domain overlap', v: 74 }
+        ],
+        matched: ['Python', 'SQL', 'Apache Spark', 'dbt', 'Airflow', 'Snowflake', 'Terraform', 'Kafka', 'Pipeline Observability'],
+        missing: ['Dagster', 'Manufacturing domain'],
+        read: 'Title and volume are a near-exact match for the current role - 4TB/day on both sides. Observability is called out explicitly and is already a listed strength. Dagster is absent but the posting accepts Airflow.'
+      },
+      tailor: {
+        bullets: [
+          { t: 'Own the ingestion and transformation platform moving 4TB/day from 30+ sources into a Snowflake lakehouse serving 380 internal users, across both batch and streaming paths.', hi: ['across both batch and streaming paths'] },
+          { b: 1 },
+          { t: 'Built the pipeline observability layer - freshness, volume, schema-drift and lineage alerting on the twenty highest-value tables - after a silent-drift incident corrupted a month of reporting.', hi: ['freshness, volume, schema-drift and lineage alerting'] },
+          { b: 3 },
+          { t: 'Mentor four engineers, run the platform design review, and write the design documents the team reviews asynchronously.', hi: ['write the design documents the team reviews asynchronously'] }
+        ],
+        rationale: 'Northwind lists observability as a named responsibility and describes itself as a writing-first remote team. The tailored set promotes the observability build from a side clause to its own bullet and makes the written-communication signal explicit.'
+      },
+      cover: [
+        'Northwind is looking for someone to own ingestion and transformation at roughly 4TB/day with observability as a first-class requirement. That is the platform I run today, and observability is the part I would bring with me: freshness, volume, schema-drift and lineage alerting, built after an incident rather than in the abstract.',
+        'I noticed the team describes itself as writing-first. That suits how I work - the migration runbook I wrote is what let four other engineers finish a project that had been bottlenecked on me.'
+      ],
+      followup: { cadence: 'Post-interview - 3 business days', note: 'System design round is scheduled. Send the short note referencing the exactly-once versus at-least-once trade-off discussion, and attach nothing - they asked for brevity.' },
+      themes: [
+        { q: 'Design a streaming ingestion path with schema evolution.', story: 'demo_story_incident' },
+        { q: 'Tell me about a time data quality failed silently.', story: 'demo_story_incident' },
+        { q: 'How do you handle a consumer who wants to bypass governance?', story: 'demo_story_conflict' }
+      ]
+    },
+    {
+      id: 'demo_job_helio', company: 'Helio Robotics', title: 'Staff Data Engineer',
+      url: 'careers.example.invalid/helio/staff-data-engineer',
+      status: 'screening', work_type: 'Hybrid', source: 'Recruiter',
+      salary_min: 185000, salary_max: 215000, date_added: DAY(-17), days_in_stage: 4,
+      summary: 'Make high-volume fleet telemetry trustworthy and queryable: own the path from robot edge devices through Kafka into the lakehouse, design the time-series model behind reliability analytics, and gate data quality so ML training sets stay reproducible.',
+      requirements: ['7+ years data engineering; streaming in production', 'Kafka, Spark Structured Streaming, Python', 'Lakehouse formats (Iceberg or Delta), AWS', 'Supporting ML training pipelines', 'Bonus: hardware/IoT telemetry'],
+      match: {
+        overall: 86,
+        dims: [
+          { k: 'Skills coverage', v: 84 }, { k: 'Seniority fit', v: 92 },
+          { k: 'Compensation', v: 100 }, { k: 'Work type', v: 70 }, { k: 'Domain overlap', v: 58 }
+        ],
+        matched: ['Kafka', 'Apache Spark', 'Python', 'AWS', 'Data Modeling', 'Pipeline Observability'],
+        missing: ['Iceberg / Delta', 'IoT telemetry', 'ML training pipelines'],
+        read: 'Strong on streaming and compensation, weaker on domain. Hybrid in Denver is workable but not the stated preference, and lakehouse table formats are the one real technical gap worth naming honestly.'
+      },
+      tailor: {
+        bullets: [
+          { t: 'Own the ingestion and transformation platform moving 4TB/day into a Snowflake lakehouse, including the Kafka streaming path from 30+ producers.', hi: ['including the Kafka streaming path from 30+ producers'] },
+          { b: 1 },
+          { t: 'Introduced schema contracts at the ingestion boundary so downstream consumers - including ML training sets - stay reproducible when upstream producers change shape.', hi: ['including ML training sets - stay reproducible'] },
+          { b: 3 },
+          { b: 4 }
+        ],
+        rationale: 'Helio cares about streaming ingestion and reproducible training data. The tailored set foregrounds the Kafka path and reframes schema contracts around ML reproducibility, which is the phrase the posting uses.'
+      },
+      cover: [
+        'Fleet telemetry has the failure mode I spend most of my time on: high volume, schema that moves underneath you, and consumers who only find out weeks later. I built schema contracts at the ingestion boundary precisely so that unexpected shapes fail loudly at the edge instead of degrading a training set quietly.',
+        'I have not worked with Iceberg or Delta in production - my lakehouse work has been Snowflake-centric. I would rather say that plainly than imply otherwise.'
+      ],
+      followup: { cadence: 'Post-screen - 5 business days', note: 'Technical screen is booked. Confirm the hybrid expectation in writing (recruiter said 2 days, posting implies 3) before the screen rather than after.' },
+      themes: [
+        { q: 'How do you keep ML training data reproducible?', story: 'demo_story_incident' },
+        { q: 'Describe a streaming system you operated at volume.', story: 'demo_story_migration' },
+        { q: 'What is a technical gap you have right now?', story: null }
+      ]
+    },
+    {
+      id: 'demo_job_vantage', company: 'Vantage Health Systems', title: 'Analytics Engineering Lead',
+      url: 'careers.example.invalid/vantage/analytics-engineering-lead',
+      status: 'applied', work_type: 'Remote', source: 'Company Site',
+      salary_min: 170000, salary_max: 195000, date_added: DAY(-11), days_in_stage: 11,
+      summary: 'Lead four analytics engineers building a unified clinical analytics layer across 22 facilities: own the dbt project end to end, enforce data contracts between source systems and the warehouse, and bring order to an inherited warehouse.',
+      requirements: ['6+ years analytics/data engineering, 2+ leading a team', 'Expert dbt and SQL; strong dimensional modeling', 'Snowflake, Airflow, Python', 'Healthcare data preferred, not required', 'Bringing order to an inherited, messy warehouse'],
+      match: {
+        overall: 79,
+        dims: [
+          { k: 'Skills coverage', v: 92 }, { k: 'Seniority fit', v: 74 },
+          { k: 'Compensation', v: 88 }, { k: 'Work type', v: 100 }, { k: 'Domain overlap', v: 40 }
+        ],
+        matched: ['dbt', 'SQL', 'Snowflake', 'Airflow', 'Python', 'Data Modeling'],
+        missing: ['Formal people management', 'Healthcare / HIPAA', 'Clinical metric definition'],
+        read: 'The technical fit is high and the inherited-warehouse framing matches the 214-pipeline migration well. The gap is formal team leadership - mentoring four engineers is adjacent to, but not the same as, managing them.'
+      },
+      tailor: {
+        bullets: [
+          { b: 0 },
+          { b: 1 },
+          { t: 'Own the dbt modelling standards, testing strategy and release process, and enforce data contracts between source systems and the warehouse.', hi: ['modelling standards, testing strategy and release process'] },
+          { t: 'Led the migration of 214 undocumented legacy ETL scripts into an orchestrated, tested and documented platform - taking an inherited, unowned estate to a governed one with zero downtime.', hi: ['inherited, unowned estate to a governed one'] },
+          { t: 'Mentor four engineers, run the platform design review, and set the standards the team builds against.', hi: ['set the standards the team builds against'] }
+        ],
+        rationale: 'Vantage is really hiring for order-from-chaos plus leadership. The tailored set uses the migration as the inherited-warehouse proof and moves standards-setting into the leadership bullet, without claiming a management title that has not been held.'
+      },
+      cover: [
+        'Your posting describes an inherited warehouse that needs order imposed on it, which is the project I know best: 214 undocumented ETL scripts, three people who understood them, and no lineage. The work that mattered was not the rewrite - it was the diffing harness that made every migrated pipeline prove itself before the old one was retired.',
+        'To be direct about the gap: I have mentored four engineers and set standards, but I have not carried a formal management title. If that is a firm requirement I would rather know early.'
+      ],
+      followup: { cadence: 'Applied 11 days ago - overdue', note: 'No response after 11 days. Send a short check-in referencing the dbt standards work specifically, not a generic nudge. One touch, then let it rest.' },
+      themes: [
+        { q: 'How do you bring order to an inherited, messy warehouse?', story: 'demo_story_migration' },
+        { q: 'How do you set modelling standards a team will follow?', story: 'demo_story_conflict' },
+        { q: 'Tell me about defining metrics with non-technical stakeholders.', story: 'demo_story_cost' }
+      ]
+    },
+    {
+      id: 'demo_job_lumen', company: 'Lumen Freight', title: 'Senior Data Engineer',
+      url: 'careers.example.invalid/lumen/senior-data-engineer',
+      status: 'applied', work_type: 'Remote', source: 'LinkedIn',
+      salary_min: 160000, salary_max: 185000, date_added: DAY(-9), days_in_stage: 9,
+      summary: 'Own the pricing and capacity data platform: ingestion from 30+ carrier APIs and EDI feeds into a normalised model, the Airflow orchestration layer and its on-call story, and feature pipelines behind the pricing model.',
+      requirements: ['5+ years data engineering', 'Python, SQL, Airflow, Snowflake', 'Integrating messy third-party APIs', 'Owning reliability, not just features'],
+      match: {
+        overall: 74,
+        dims: [
+          { k: 'Skills coverage', v: 90 }, { k: 'Seniority fit', v: 68 },
+          { k: 'Compensation', v: 62 }, { k: 'Work type', v: 100 }, { k: 'Domain overlap', v: 50 }
+        ],
+        matched: ['Python', 'SQL', 'Airflow', 'Snowflake', 'Pipeline Observability'],
+        missing: ['EDI feeds', 'Feature pipelines for pricing models'],
+        read: 'Comfortably within reach technically, but the band opens below the $165k floor and the role is scoped a level down. Worth keeping warm rather than pushing hard.'
+      },
+      tailor: {
+        bullets: [
+          { t: 'Own the ingestion platform integrating 30+ third-party sources - many of them undocumented and inconsistent - into a normalised Snowflake model.', hi: ['many of them undocumented and inconsistent'] },
+          { b: 1 },
+          { t: 'Own reliability for the orchestration layer: schema contracts at the boundary, freshness and volume alerting, and the on-call runbook for the twenty highest-value tables.', hi: ['and the on-call runbook'] },
+          { b: 3 },
+          { b: 4 }
+        ],
+        rationale: 'Lumen asks twice for someone who owns reliability rather than only building. The tailored set converts the observability work into an explicit reliability-ownership bullet and leans on messy third-party integration.'
+      },
+      cover: [
+        'Thirty-plus carrier APIs and EDI feeds is a familiar shape - my current platform ingests from thirty sources, and the hard part is never the happy path, it is what happens when a producer changes a field without telling anyone.',
+        'The line in your posting about owning reliability rather than only building features is the reason I applied.'
+      ],
+      followup: { cadence: 'Applied 9 days ago - due now', note: 'Second touch. Hiring manager is Dana Whitfield, named in the posting. Keep it to three sentences and reference the reliability-ownership line.' },
+      themes: [
+        { q: 'How do you integrate an unreliable third-party source?', story: 'demo_story_incident' },
+        { q: 'What does owning reliability mean to you?', story: 'demo_story_incident' }
+      ]
+    },
+    {
+      id: 'demo_job_riverbend', company: 'Riverbend Energy', title: 'Senior Analytics Engineer',
+      url: 'careers.example.invalid/riverbend/senior-analytics-engineer',
+      status: 'saved', work_type: 'Remote', source: 'Other',
+      salary_min: 155000, salary_max: 180000, date_added: DAY(-4), days_in_stage: 4,
+      summary: 'Own the dbt layer for generation and grid-operations datasets. Strong SQL and dimensional modelling required; Snowflake and dbt daily; Python for orchestration glue.',
+      requirements: ['Expert SQL and dimensional modelling', 'Snowflake and dbt daily', 'Python for orchestration glue'],
+      match: {
+        overall: 71,
+        dims: [
+          { k: 'Skills coverage', v: 88 }, { k: 'Seniority fit', v: 66 },
+          { k: 'Compensation', v: 58 }, { k: 'Work type', v: 100 }, { k: 'Domain overlap', v: 44 }
+        ],
+        matched: ['SQL', 'dbt', 'Snowflake', 'Python', 'Data Modeling'],
+        missing: ['Energy / grid operations', 'Platform ownership scope'],
+        read: 'A clean analytics-engineering role rather than a platform role. Skills line up, but the scope is narrower than the last two years and the band opens below the floor.'
+      },
+      tailor: {
+        bullets: [
+          { b: 1 },
+          { t: 'Own the dbt transformation layer end to end: modelling standards, incremental strategy, testing and documentation across four business domains.', hi: ['incremental strategy, testing and documentation'] },
+          { t: 'Designed the dimensional model behind a company-wide reporting suite, replacing six conflicting spreadsheet definitions with one governed metric layer.', hi: ['one governed metric layer'] },
+          { b: 3 },
+          { b: 4 }
+        ],
+        rationale: 'Riverbend is a dbt and dimensional-modelling role, so the tailored set pulls the dimensional-model work forward from the earlier position and leads with cost rather than platform scale.'
+      },
+      cover: [
+        'Your posting is squarely a dbt and dimensional-modelling role, which is where I started before moving into platform ownership. The work I would point at is replacing six conflicting spreadsheet revenue definitions with one governed metric layer that survived a reorganisation.',
+        'I would want to understand how much of the role is modelling versus platform, because the two have pulled in different directions in my last two jobs.'
+      ],
+      followup: { cadence: 'Saved - not yet applied', note: 'Decide within the week. If Kestrel closes, drop this one rather than carrying it.' },
+      themes: [
+        { q: 'How do you resolve conflicting metric definitions?', story: 'demo_story_conflict' },
+        { q: 'Walk me through your incremental model strategy.', story: 'demo_story_cost' }
+      ]
+    },
+    {
+      id: 'demo_job_cobalt', company: 'Cobalt Systems', title: 'Data Platform Engineer II',
+      url: 'careers.example.invalid/cobalt/data-platform-engineer-ii',
+      status: 'saved', work_type: 'Hybrid', source: 'Indeed',
+      salary_min: 140000, salary_max: 165000, date_added: DAY(-5), days_in_stage: 5,
+      summary: 'Build and maintain ELT pipelines feeding the company warehouse, support analysts with modelled datasets, and help migrate legacy SSIS jobs. Hybrid in Denver, three days on-site.',
+      requirements: ['3-5 years data engineering', 'SQL, Python, Azure Data Factory or Airflow', 'Snowflake or Synapse'],
+      match: {
+        overall: 52,
+        dims: [
+          { k: 'Skills coverage', v: 86 }, { k: 'Seniority fit', v: 30 },
+          { k: 'Compensation', v: 24 }, { k: 'Work type', v: 55 }, { k: 'Domain overlap', v: 60 }
+        ],
+        matched: ['SQL', 'Python', 'Airflow', 'Snowflake'],
+        missing: ['Azure Data Factory', 'SSIS'],
+        read: 'A level down and the band tops out at the salary floor. Kept visible so the pipeline stays honest about what was considered and rejected, not because it is a live target.'
+      },
+      tailor: {
+        bullets: [{ b: 0 }, { b: 1 }, { b: 2 }, { b: 3 }, { b: 4 }],
+        rationale: 'No tailoring prepared. The role is scoped a level below the target band, so the base resume is left untouched rather than spending effort on a role that would not be accepted.'
+      },
+      cover: null,
+      followup: { cadence: 'Saved - no action planned', note: 'No follow-up. Retained in the pipeline as a deliberate pass rather than deleted, so the funnel numbers stay truthful.' },
+      themes: []
+    },
+    {
+      id: 'demo_job_pinehurst', company: 'Pinehurst Logistics', title: 'Data Engineering Manager',
+      url: 'careers.example.invalid/pinehurst/data-engineering-manager',
+      status: 'saved', work_type: 'On-site', source: 'Recruiter',
+      salary_min: 180000, salary_max: 210000, date_added: DAY(-2), days_in_stage: 2,
+      summary: 'Lead a team of six as a player-coach, roughly 30% hands-on. On-site in Kansas City with relocation offered.',
+      requirements: ['8+ years data engineering', '2+ years managing engineers', 'On-site, relocation offered'],
+      match: {
+        overall: 48,
+        dims: [
+          { k: 'Skills coverage', v: 80 }, { k: 'Seniority fit', v: 62 },
+          { k: 'Compensation', v: 96 }, { k: 'Work type', v: 5 }, { k: 'Domain overlap', v: 45 }
+        ],
+        matched: ['Data Modeling', 'Python', 'SQL', 'Airflow'],
+        missing: ['2+ years formal management', 'Willingness to relocate'],
+        read: 'Compensation is excellent and the technical bar is met, but on-site in another state is a stated non-starter and the management requirement is not yet met. Recorded as a pass with the reason attached.'
+      },
+      tailor: {
+        bullets: [{ b: 0 }, { b: 1 }, { b: 2 }, { b: 3 }, { b: 4 }],
+        rationale: 'No tailoring prepared. On-site relocation is a hard constraint in the profile, so this role is a documented pass.'
+      },
+      cover: null,
+      followup: { cadence: 'Saved - declining', note: 'Reply to the recruiter to decline the on-site requirement but ask to be kept in mind for remote openings. Declining well is worth more than going quiet.' },
+      themes: []
+    },
+    {
+      id: 'demo_job_ardent', company: 'Ardent Retail Group', title: 'Senior Data Engineer',
+      url: 'careers.example.invalid/ardent/senior-data-engineer',
+      status: 'rejected', work_type: 'On-site', source: 'Indeed',
+      salary_min: 145000, salary_max: 165000, date_added: DAY(-46), days_in_stage: 12,
+      summary: 'Closed. The role was filled internally after the second round. On-site in a different metro and the band sat below target; the recruiter offered to keep the profile on file for remote openings.',
+      requirements: ['SQL, Python, Spark, Databricks', 'On-site five days'],
+      match: {
+        overall: 41,
+        dims: [
+          { k: 'Skills coverage', v: 78 }, { k: 'Seniority fit', v: 70 },
+          { k: 'Compensation', v: 20 }, { k: 'Work type', v: 5 }, { k: 'Domain overlap', v: 42 }
+        ],
+        matched: ['SQL', 'Python', 'Apache Spark'],
+        missing: ['Databricks', 'On-site availability'],
+        read: 'Closed - filled internally after round two. Kept in the pipeline because a funnel that deletes its losses cannot measure anything.'
+      },
+      tailor: {
+        bullets: [{ b: 0 }, { b: 1 }, { b: 2 }, { b: 3 }, { b: 4 }],
+        rationale: 'Role closed. Tailoring retained at base for the record.'
+      },
+      cover: null,
+      followup: { cadence: 'Closed', note: 'Rejection logged with the reason: filled internally, on-site, band below floor. The recruiter relationship stays open for remote roles.' },
+      themes: []
+    }
+  ];
+
+  var EVENTS = [
+    { id: 'demo_ev_kestrel_offer', title: 'Kestrel Financial - Offer Discussion', type: 'Offer Call', job_id: 'demo_job_kestrel', date: DAY(1), time: '16:30', completed: false, notes: 'Verbal offer received at $205k base. Discuss equity refresh, remote stipend and start date. Target $215k base given the Northwind process is still live.' },
+    { id: 'demo_ev_northwind_prep', title: 'Northwind - Prep block: streaming design', type: 'Prep Session', job_id: 'demo_job_northwind', date: DAY(2), time: '19:00', completed: false, notes: 'Rehearse the exactly-once versus at-least-once trade-off story and the cost-reduction story out loud.' },
+    { id: 'demo_ev_northwind_design', title: 'Northwind Analytics - System Design Round', type: 'Interview', job_id: 'demo_job_northwind', date: DAY(3), time: '14:00', completed: false, notes: 'Panel: Director of Data plus two staff engineers. 60 minutes. Streaming ingestion design question and trade-off discussion.' },
+    { id: 'demo_ev_helio_tech', title: 'Helio Robotics - Technical Screen', type: 'Technical Screen', job_id: 'demo_job_helio', date: DAY(5), time: '11:00', completed: false, notes: '45 minutes live coding plus schema design on fleet telemetry. Reviewer: Staff Engineer, Robotics Data.' },
+    { id: 'demo_ev_northwind_screen', title: 'Northwind Analytics - Technical Screen', type: 'Technical Screen', job_id: 'demo_job_northwind', date: DAY(-8), time: '13:00', completed: true, notes: 'Went well. SQL window functions plus an incremental dbt model discussion. Interviewer flagged that the design round is the hard one.' },
+    { id: 'demo_ev_kestrel_final', title: 'Kestrel Financial - Final Round', type: 'Interview', job_id: 'demo_job_kestrel', date: DAY(-6), time: '10:00', completed: true, notes: 'Four back-to-back conversations. Strongest signal: the data-contract story. Weakest: no crisp answer on mentorship scale.' },
+    { id: 'demo_ev_helio_screen', title: 'Helio Robotics - Recruiter Screen', type: 'Phone Screen', job_id: 'demo_job_helio', date: DAY(-13), time: '15:30', completed: true, notes: 'Confirmed the hybrid expectation is 2 days, not 3. Band confirmed at $185-215k.' }
+  ];
+
+  var STORIES = [
+    {
+      id: 'demo_story_cost', title: 'Cut warehouse spend 41% without losing coverage',
+      metric: '41% cost reduction ($35k/month), zero datasets retired',
+      tags: ['cost optimization', 'dbt', 'stakeholder management', 'measurement'],
+      situation: 'The analytics warehouse bill had grown 3x in eighteen months to about $84,000 a month, and finance froze all new data hiring until it was under control.',
+      task: 'I was asked to bring spend down materially within one quarter without dropping datasets that teams depended on.',
+      action: 'I instrumented query-level cost attribution first so the conversation could be about evidence instead of opinion. That showed 62% of compute came from eleven dashboards refreshing hourly that nobody opened more than weekly. I moved those to incremental dbt models on a daily cadence, consolidated four overlapping warehouses down to two sized to their real workloads, and added a pre-merge cost check that flags any model whose projected scan cost exceeds a threshold.',
+      result: 'Spend dropped 41% to roughly $49,000 a month within ten weeks, and stayed there for the following year because the pre-merge check stopped regressions. No dataset was retired, and the hiring freeze was lifted.'
+    },
+    {
+      id: 'demo_story_incident', title: 'Silent schema drift corrupted a month of revenue reporting',
+      metric: '31 days of corrupted data recovered; 3 later incidents caught pre-impact',
+      tags: ['incident response', 'data quality', 'ownership', 'postmortem'],
+      situation: 'An upstream service renamed a field, and because our ingestion silently coerced unknown columns to null, thirty-one days of revenue attribution was quietly wrong before anyone noticed.',
+      task: 'I owned both the recovery and making sure the same class of failure could not recur.',
+      action: 'I reconstructed the correct history from the raw event log rather than the modelled tables, which meant the fix did not depend on the broken transformation. Then I wrote the postmortem, and pushed for the real fix rather than a monitoring band-aid: schema contracts enforced at ingest, so an unexpected shape fails loudly at the boundary instead of degrading downstream. I also added freshness and volume alerting on the twenty highest-value tables.',
+      result: 'Reporting was corrected within four days. In the following year, three similar upstream changes were caught at the boundary within minutes instead of weeks, and none reached a dashboard.'
+    },
+    {
+      id: 'demo_story_migration', title: 'Migrated 200+ legacy pipelines with no consumer downtime',
+      metric: '214 pipelines, 0 downtime, 31 latent bugs caught',
+      tags: ['migration', 'risk management', 'delegation', 'testing'],
+      situation: 'We inherited more than two hundred cron-driven ETL scripts with no tests, no lineage, and three people who understood them.',
+      task: 'Move everything to orchestrated, tested pipelines while the business kept running on the old ones.',
+      action: 'I refused the big-bang cutover and ran the two systems in parallel with automated output diffing, so every migrated pipeline had to prove byte-equivalence before its old version was retired. I sequenced the work by consumer criticality rather than by ease, which was slower to show progress but meant the riskiest pipelines got the most scrutiny while the team was freshest. I also wrote the migration runbook so four other engineers could do the work instead of it bottlenecking on me.',
+      result: 'All 214 pipelines were migrated over seven months with zero consumer-visible downtime and 31 latent correctness bugs found by the diffing harness. The runbook let the team run the last third without me.'
+    },
+    {
+      id: 'demo_story_conflict', title: 'Disagreed with an ML team about data contracts and found the real constraint',
+      metric: 'Retraining cycle daily to hourly; 0 breakages from 2 upstream changes',
+      tags: ['conflict', 'influence', 'data contracts', 'listening'],
+      situation: 'The ML team wanted direct read access to raw ingestion tables so they could move faster; I had been pushing every consumer onto governed, contracted datasets.',
+      task: 'Resolve it without either blocking their velocity or accepting a dependency that would break every time an upstream schema moved.',
+      action: 'I stopped arguing the principle and asked what they were actually blocked on, which turned out to be latency: the governed tables landed once a day and they needed same-hour data for retraining experiments. The contract was never the problem. I built a contracted streaming view with a fifteen-minute SLA for the specific fields they used, which met their real need and kept the boundary intact.',
+      result: 'They moved onto the contracted path voluntarily, and their retraining cycle went from daily to hourly. Two upstream schema changes later that year broke nothing for them.'
+    }
+  ];
+
+  var STAGES = [
+    { k: 'saved', label: 'Saved' },
+    { k: 'applied', label: 'Applied' },
+    { k: 'screening', label: 'Screening' },
+    { k: 'interview', label: 'Interview' },
+    { k: 'offer', label: 'Offer' },
+    { k: 'rejected', label: 'Closed' }
+  ];
+
+  /* Deep clone so Reset Demo always restores an identical, uncontaminated
+     structure regardless of what the visitor did to the previous state. */
+  function seed() {
+    return JSON.parse(JSON.stringify({
+      profile: PROFILE,
+      baseBullets: BASE_BULLETS,
+      employment: EMPLOYMENT,
+      education: EDUCATION,
+      jobs: JOBS,
+      events: EVENTS,
+      stories: STORIES
+    }));
+  }
+
+  return { seed: seed, STAGES: STAGES, DAY: DAY };
+})();
+
+</script>
+<script>
+/* ==========================================================================
+   CareerOS Public Recruiter Demo - presentation layer
+
+   This file navigates and transitions state over the fixtures in DEMO_DATA.
+   It deliberately contains NO scoring engine, NO resume parser, NO ATS
+   analyser, NO text generation, NO licensing and NO persistence. Every score,
+   tailored bullet, cover paragraph and follow-up note shown to the visitor is
+   stored data, not a computed result.
+
+   State lives in memory only: nothing is written to localStorage, sessionStorage,
+   IndexedDB, cookies or any server. A refresh starts clean; Reset Demo restores
+   the identical seed.
+   ========================================================================== */
+(function () {
+  'use strict';
+
+  var STEPS = [
+    { k: 'discover',  n: 1, label: 'Discover' },
+    { k: 'score',     n: 2, label: 'Score' },
+    { k: 'pipeline',  n: 3, label: 'Pipeline' },
+    { k: 'tailor',    n: 4, label: 'Tailor' },
+    { k: 'bundle',    n: 5, label: 'Bundle' },
+    { k: 'followup',  n: 6, label: 'Follow Up' },
+    { k: 'interview', n: 7, label: 'Interview' },
+    { k: 'measure',   n: 8, label: 'Measure' }
+  ];
+
+  var STAGES = DEMO_DATA.STAGES;
+  var STAGE_ORDER = ['saved', 'applied', 'screening', 'interview', 'offer'];
+
+  var state = null;
+
+  function freshState() {
+    return {
+      data: DEMO_DATA.seed(),
+      step: 'discover',
+      selected: 'demo_job_kestrel',
+      workFilter: 'all',
+      floorOnly: false,
+      sort: 'match',
+      openStory: null,
+      followedUp: {}
+    };
+  }
+
+  /* ---------- helpers ---------------------------------------------------- */
+
+  function esc(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
+
+  function highlight(text, phrases) {
+    var out = esc(text);
+    (phrases || []).forEach(function (p) {
+      var e = esc(p);
+      if (out.indexOf(e) !== -1) out = out.split(e).join('<mark>' + e + '</mark>');
+    });
+    return out;
+  }
+
+  function money(n) {
+    return '$' + Math.round(n / 1000) + 'k';
+  }
+
+  function job(id) {
+    var list = state.data.jobs, i;
+    for (i = 0; i < list.length; i++) if (list[i].id === id) return list[i];
+    return null;
+  }
+
+  function selectedJob() { return job(state.selected) || state.data.jobs[0]; }
+
+  function story(id) {
+    var list = state.data.stories, i;
+    for (i = 0; i < list.length; i++) if (list[i].id === id) return list[i];
+    return null;
+  }
+
+  function stageLabel(k) {
+    for (var i = 0; i < STAGES.length; i++) if (STAGES[i].k === k) return STAGES[i].label;
+    return k;
+  }
+
+  function stageTagClass(k) {
+    return { offer: 'tag-green', interview: 'tag-blue', screening: 'tag-purple',
+             applied: 'tag-amber', rejected: 'tag-red' }[k] || '';
+  }
+
+  function scoreColor(v) {
+    return v >= 85 ? 'var(--green)' : v >= 65 ? 'var(--accent)' : 'var(--warm-400)';
+  }
+
+  function barClass(v) { return v >= 85 ? 'good' : v >= 55 ? '' : 'weak'; }
+
+  function fixtureNote(text) {
+    return '<div class="fixture-note"><span class="ico" aria-hidden="true">&#9432;</span>' +
+           '<span>' + text + '</span></div>';
+  }
+
+  function toast(msg) {
+    var el = document.getElementById('toast');
+    el.textContent = msg;
+    el.classList.add('show');
+    clearTimeout(toast._t);
+    toast._t = setTimeout(function () { el.classList.remove('show'); }, 2100);
+  }
+
+  function scoreBadge(v, size) {
+    var s = size || 56;
+    return '<div class="score-badge" style="width:' + s + 'px;height:' + s + 'px;background:conic-gradient(' +
+      scoreColor(v) + ' ' + v + '%, var(--warm-100) 0)" role="img" aria-label="Match score ' + v + ' out of 100">' +
+      '<span>' + v + '</span></div>';
+  }
+
+  /* ---------- 1. Discover ------------------------------------------------- */
+
+  function visibleJobs() {
+    var list = state.data.jobs.slice();
+    if (state.workFilter !== 'all') {
+      list = list.filter(function (j) { return j.work_type === state.workFilter; });
+    }
+    if (state.floorOnly) {
+      list = list.filter(function (j) { return j.salary_max >= state.data.profile.salary_floor; });
+    }
+    if (state.sort === 'match') list.sort(function (a, b) { return b.match.overall - a.match.overall; });
+    else if (state.sort === 'pay') list.sort(function (a, b) { return b.salary_max - a.salary_max; });
+    else list.sort(function (a, b) { return a.days_in_stage - b.days_in_stage; });
+    return list;
+  }
+
+  function renderDiscover() {
+    var list = visibleJobs();
+    var chips = ['all', 'Remote', 'Hybrid', 'On-site'].map(function (w) {
+      return '<button class="chip" data-act="work" data-v="' + w + '" aria-pressed="' +
+        (state.workFilter === w) + '">' + (w === 'all' ? 'All work types' : w) + '</button>';
+    }).join('');
+    var sorts = [['match', 'Best match'], ['pay', 'Highest pay'], ['new', 'Newest']].map(function (s) {
+      return '<button class="chip" data-act="sort" data-v="' + s[0] + '" aria-pressed="' +
+        (state.sort === s[0]) + '">' + s[1] + '</button>';
+    }).join('');
+
+    var cards = list.map(function (j) {
+      return '<button class="jobcard" data-act="pick" data-id="' + j.id + '" aria-selected="' +
+        (j.id === state.selected) + '">' +
+        scoreBadge(j.match.overall) +
+        '<span class="jobcard-main">' +
+          '<span class="jobcard-title">' + esc(j.title) + '</span>' +
+          '<span class="jobcard-co">' + esc(j.company) + ' &middot; ' + esc(j.work_type) + '</span>' +
+          '<span class="meta">' +
+            '<span class="tag ' + stageTagClass(j.status) + '">' + stageLabel(j.status) + '</span>' +
+            '<span class="tag">' + money(j.salary_min) + ' - ' + money(j.salary_max) + '</span>' +
+            '<span class="tag">via ' + esc(j.source) + '</span>' +
+            (j.salary_max < state.data.profile.salary_floor ? '<span class="tag tag-red">Below floor</span>' : '') +
+          '</span>' +
+        '</span></button>';
+    }).join('');
+
+    return panelHead('Step 1 of 8', 'Discover',
+      'Roles surfaced against Avery Chen’s target titles, salary floor and work-type preferences. ' +
+      'Filter and sort the feed, then open any role to see how it was scored.') +
+      '<div class="filterbar"><span class="lab">Work type</span>' + chips +
+      '<span class="lab" style="margin-left:8px">Sort</span>' + sorts +
+      '<button class="chip" data-act="floor" aria-pressed="' + state.floorOnly + '">Meets ' +
+        money(state.data.profile.salary_floor) + ' floor</button></div>' +
+      (list.length ? '<div class="joblist">' + cards + '</div>'
+                   : '<div class="card"><p class="empty">No roles match these filters. Clear one to see more.</p></div>') +
+      '<div style="margin-top:14px">' + fixtureNote(
+        '<b>Fictional feed.</b> Nine invented roles at invented companies. The public demo does not connect to job boards ' +
+        'or aggregators — the source adapters are not part of this build.') + '</div>';
+  }
+
+  /* ---------- 2. Score ---------------------------------------------------- */
+
+  function renderScore() {
+    var j = selectedJob(), m = j.match;
+    var dims = m.dims.map(function (d) {
+      return '<div class="dim"><div class="dim-head"><span>' + esc(d.k) + '</span><span>' + d.v + '</span></div>' +
+        '<div class="bar ' + barClass(d.v) + '"><i style="width:' + d.v + '%"></i></div></div>';
+    }).join('');
+    var matched = m.matched.map(function (s) { return '<span class="tag tag-green">' + esc(s) + '</span>'; }).join('');
+    var missing = m.missing.length
+      ? m.missing.map(function (s) { return '<span class="tag tag-amber">' + esc(s) + '</span>'; }).join('')
+      : '<span class="tag tag-green">No material gaps</span>';
+    var reqs = j.requirements.map(function (r) { return '<li>' + esc(r) + '</li>'; }).join('');
+
+    return panelHead('Step 2 of 8', 'Score',
+      'Every role carries a match breakdown across five dimensions, plus an explicit read of where it is weak. ' +
+      'The point is a decision, not a number.') +
+      '<div class="grid grid-side">' +
+        '<div class="card">' +
+          '<div style="display:flex;gap:16px;align-items:flex-start;margin-bottom:16px">' +
+            scoreBadge(m.overall, 72) +
+            '<div style="flex:1;min-width:0"><h3>' + esc(j.title) + '</h3>' +
+            '<p style="color:var(--warm-700);font-size:13px;margin-bottom:7px">' + esc(j.company) + ' &middot; ' +
+              esc(j.work_type) + ' &middot; ' + money(j.salary_min) + ' - ' + money(j.salary_max) + '</p>' +
+            '<span class="tag ' + stageTagClass(j.status) + '">' + stageLabel(j.status) + '</span></div>' +
+          '</div>' + dims +
+          '<div class="card-label" style="margin-top:16px">The read</div>' +
+          '<p style="font-size:13.5px;line-height:1.6">' + esc(m.read) + '</p>' +
+          '<div style="margin-top:16px;display:flex;gap:8px;flex-wrap:wrap">' +
+            '<button class="btn btn-primary btn-sm" data-act="go" data-v="tailor">Tailor resume for this role</button>' +
+            (STAGE_ORDER.indexOf(j.status) > -1 && j.status !== 'offer'
+              ? '<button class="btn btn-sm" data-act="advance" data-id="' + j.id + '">Advance to ' +
+                 stageLabel(STAGE_ORDER[STAGE_ORDER.indexOf(j.status) + 1]) + '</button>' : '') +
+          '</div>' +
+        '</div>' +
+        '<div>' +
+          '<div class="card" style="margin-bottom:14px"><div class="card-label">Skills the role asks for</div>' +
+            '<div class="skillrow">' + matched + '</div>' +
+            '<div class="card-label" style="margin-top:14px">Gaps worth naming</div>' +
+            '<div class="skillrow">' + missing + '</div></div>' +
+          '<div class="card" style="margin-bottom:14px"><div class="card-label">Role summary</div>' +
+            '<p style="font-size:13px;line-height:1.6;margin-bottom:10px">' + esc(j.summary) + '</p>' +
+            '<div class="card-label">Requirements</div><ul style="margin-left:16px;font-size:13px;line-height:1.55">' +
+            reqs + '</ul>' +
+            '<p style="font-size:11.5px;color:var(--warm-500);margin-top:10px;font-family:var(--font-mono)">' +
+            esc(j.url) + '</p></div>' +
+          fixtureNote('<b>Scores are stored fixtures.</b> They were authored for this demonstration. ' +
+            'The scoring engine — skill-synonym expansion, seniority inference and the weighting model — is not ' +
+            'included in the public build.') +
+        '</div>' +
+      '</div>';
+  }
+
+  /* ---------- 3. Pipeline ------------------------------------------------- */
+
+  function renderPipeline() {
+    var cols = STAGES.map(function (st) {
+      var inStage = state.data.jobs.filter(function (j) { return j.status === st.k; });
+      var cards = inStage.map(function (j) {
+        var idx = STAGE_ORDER.indexOf(j.status);
+        var canAdvance = idx > -1 && idx < STAGE_ORDER.length - 1;
+        return '<button class="pcard" data-act="pick" data-id="' + j.id + '" aria-selected="' +
+          (j.id === state.selected) + '">' +
+          '<span class="pcard-co">' + esc(j.company) + '</span>' +
+          '<span class="pcard-title">' + esc(j.title) + '</span>' +
+          '<span class="pcard-foot"><span class="days">' + j.days_in_stage + 'd &middot; ' +
+            j.match.overall + '</span>' +
+            (canAdvance ? '<span class="advance" data-act="advance" data-id="' + j.id + '" role="button" tabindex="0">Advance</span>' : '') +
+          '</span></button>';
+      }).join('');
+      return '<div class="col"><div class="col-head"><span class="col-name">' + st.label +
+        '</span><span class="col-count">' + inStage.length + '</span></div>' +
+        (cards || '<p style="font-size:11.5px;color:var(--warm-400);padding:4px 2px">Empty</p>') + '</div>';
+    }).join('');
+
+    return panelHead('Step 3 of 8', 'Pipeline',
+      'Every role in one board with time-in-stage on each card. Advancing a role updates the funnel in step 8 ' +
+      'immediately — the measurement is a by-product of the tracking, not a separate chore.') +
+      '<div class="board">' + cols + '</div>' +
+      '<div style="margin-top:16px">' + fixtureNote(
+        '<b>Try it:</b> advance a role and open <b>Measure</b> — the funnel and response rate recalculate from ' +
+        'live demo state. Nothing is saved; a refresh or Reset Demo restores the seed.') + '</div>';
+  }
+
+  /* ---------- 4. Tailor --------------------------------------------------- */
+
+  function renderTailor() {
+    var j = selectedJob(), base = state.data.baseBullets;
+    var tailored = j.tailor.bullets.map(function (b) {
+      if (b.b !== undefined) return '<li>' + esc(base[b.b]) + '</li>';
+      return '<li class="changed">' + highlight(b.t, b.hi) + '</li>';
+    }).join('');
+    var baseList = base.map(function (t) { return '<li>' + esc(t) + '</li>'; }).join('');
+    var changes = j.tailor.bullets.filter(function (b) { return b.b === undefined; }).length;
+
+    return panelHead('Step 4 of 8', 'Tailor',
+      'The base resume on the left, the version prepared for ' + esc(j.company) + ' on the right. ' +
+      'Changes are visible rather than silent, so the candidate can defend every line in an interview.') +
+      '<div class="grid grid-2">' +
+        '<div class="card"><div class="card-label">Base resume — current role</div>' +
+          '<ul class="bullets">' + baseList + '</ul></div>' +
+        '<div class="card" style="border-color:var(--accent)">' +
+          '<div class="card-label" style="color:var(--accent-dark)">Tailored for ' + esc(j.company) +
+            ' — ' + changes + ' of ' + base.length + ' changed</div>' +
+          '<ul class="bullets">' + tailored + '</ul>' +
+          '<p class="rationale"><b>Why these changes:</b> ' + esc(j.tailor.rationale) + '</p></div>' +
+      '</div>' +
+      '<div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap;align-items:center">' +
+        '<button class="btn btn-primary btn-sm" data-act="go" data-v="bundle">Assemble application bundle</button>' +
+        '<span style="font-size:12.5px;color:var(--warm-500)">Selected role: ' + esc(j.company) + '</span></div>' +
+      '<div style="margin-top:14px">' + fixtureNote(
+        '<b>Tailored text is stored, not generated.</b> The resume parser, ATS analyser, keyword engine and the ' +
+        'four resume templates are not included in the public build. This step shows the output shape and the ' +
+        'reasoning, which is what an employer needs to evaluate the work.') + '</div>';
+  }
+
+  /* ---------- 5. Bundle --------------------------------------------------- */
+
+  function renderBundle() {
+    var j = selectedJob(), base = state.data.baseBullets, p = state.data.profile;
+    var hasCover = !!j.cover;
+    var items = [
+      { on: true, t: 'Tailored resume — ' + esc(j.company) + ' (' +
+          j.tailor.bullets.filter(function (b) { return b.b === undefined; }).length + ' bullets rewritten)' },
+      { on: hasCover, t: hasCover ? 'Cover letter — opens on the requirement the role leads with'
+                                  : 'Cover letter — not prepared (role is a documented pass)' },
+      { on: true, t: 'Match read and named gaps — so the gap is raised first, not discovered' },
+      { on: j.themes.length > 0, t: j.themes.length
+          ? 'Interview themes mapped to ' + j.themes.length + ' prepared stories'
+          : 'Interview themes — none prepared for this role' },
+      { on: true, t: 'Follow-up scheduled — ' + esc(j.followup.cadence) }
+    ];
+    var checklist = items.map(function (it) {
+      return '<li><span class="box' + (it.on ? '' : ' off') + '" aria-hidden="true">' +
+        (it.on ? '✓' : '–') + '</span><span>' + it.t + '</span></li>';
+    }).join('');
+
+    var tailoredBullets = j.tailor.bullets.map(function (b) {
+      return '<li>' + (b.b !== undefined ? esc(base[b.b]) : highlight(b.t, b.hi)) + '</li>';
+    }).join('');
+
+    var coverHtml = hasCover
+      ? j.cover.map(function (para) { return '<p>' + esc(para) + '</p>'; }).join('')
+      : '<p style="color:var(--warm-500)">No cover letter prepared for this role.</p>';
+
+    var emp = state.data.employment.slice(1).map(function (e) {
+      return '<p style="margin-bottom:4px"><b>' + esc(e.title) + '</b>, ' + esc(e.company) +
+        ' <span style="color:var(--warm-500)">' + esc(e.start) + ' – ' + esc(e.end) + '</span></p>';
+    }).join('');
+
+    return panelHead('Step 5 of 8', 'Bundle',
+      'One assembled package per role: the tailored resume, the cover letter, the gaps to raise, and the ' +
+      'follow-up already scheduled. Reviewed on screen before anything is sent.') +
+      '<div class="grid grid-side">' +
+        '<div class="card"><div class="card-label">Package preview — ' + esc(j.company) + '</div>' +
+          '<div class="doc-preview">' +
+            '<h4>' + esc(p.name) + '</h4>' +
+            '<p class="doc-meta">' + esc(p.headline) + ' &middot; ' + esc(p.location) +
+              ' &middot; Fictional demonstration profile</p>' +
+            '<div class="doc-sec">Experience — Brightwater Data, Senior Data Engineer</div>' +
+            '<ul>' + tailoredBullets + '</ul>' +
+            '<div class="doc-sec">Earlier</div>' + emp +
+            '<div class="doc-sec">Education</div>' +
+            '<p>' + esc(state.data.education[0].degree) + ', ' + esc(state.data.education[0].school) +
+              ' (' + esc(state.data.education[0].end) + ')</p>' +
+            '<div class="doc-sec">Cover letter</div>' + coverHtml +
+          '</div></div>' +
+        '<div>' +
+          '<div class="card" style="margin-bottom:14px"><div class="card-label">Bundle contents</div>' +
+            '<ul class="checklist">' + checklist + '</ul>' +
+            '<div style="margin-top:14px"><button class="btn btn-primary btn-sm" data-act="go" data-v="followup">' +
+              'Schedule the follow-up</button></div></div>' +
+          fixtureNote('<b>Preview only.</b> Document export (PDF and DOCX), the document library and application ' +
+            'submission are not included in the public build. This demo cannot send, upload or file anything.') +
+        '</div>' +
+      '</div>';
+  }
+
+  /* ---------- 6. Follow Up ------------------------------------------------ */
+
+  function followState(j) {
+    if (j.status === 'rejected') return { cls: '', label: 'Closed' };
+    if (j.status === 'saved') return { cls: '', label: 'Not applied' };
+    if (j.status === 'offer') return { cls: 'due', label: 'Within 48h' };
+    if (j.status === 'applied' && j.days_in_stage >= 10) return { cls: 'due', label: j.days_in_stage + 'd overdue' };
+    if (j.status === 'applied' && j.days_in_stage >= 7) return { cls: 'soon', label: 'Due now' };
+    return { cls: 'soon', label: 'Active' };
+  }
+
+  function renderFollowUp() {
+    var order = { offer: 0, applied: 1, interview: 2, screening: 3, saved: 4, rejected: 5 };
+    var list = state.data.jobs.slice().sort(function (a, b) {
+      return (order[a.status] - order[b.status]) || (b.days_in_stage - a.days_in_stage);
+    });
+    var rows = list.map(function (j) {
+      var f = followState(j), done = !!state.followedUp[j.id];
+      return '<div class="row"><div class="row-main">' +
+        '<div class="row-title">' + esc(j.company) + ' — ' + esc(j.followup.cadence) + '</div>' +
+        '<div class="row-sub">' + esc(j.followup.note) + '</div></div>' +
+        '<div class="row-actions">' +
+          (done ? '<span class="done-mark">✓ Sent</span>'
+                : '<span class="when ' + f.cls + '">' + f.label + '</span>' +
+                  (j.status === 'rejected' ? '' :
+                   '<button class="btn btn-sm" data-act="follow" data-id="' + j.id + '">Mark sent</button>')) +
+        '</div></div>';
+    }).join('');
+
+    var doneCount = Object.keys(state.followedUp).length;
+    var overdue = state.data.jobs.filter(function (j) {
+      return !state.followedUp[j.id] && followState(j).cls === 'due';
+    }).length;
+
+    return panelHead('Step 6 of 8', 'Follow Up',
+      'The queue that decides outcomes. Each role carries its own cadence and a note about what to actually say, ' +
+      'so a follow-up is a specific message rather than a nudge.') +
+      '<div class="grid grid-3" style="margin-bottom:16px">' +
+        kpi(overdue, 'Needing action now', overdue ? 'Oldest is Vantage Health at 11 days.' : 'Queue is clear.') +
+        kpi(doneCount, 'Marked sent this session', 'Resets with the demo.') +
+        kpi(state.data.jobs.filter(function (j) { return j.status !== 'rejected' && j.status !== 'saved'; }).length,
+            'Live conversations', 'Applied through offer.') +
+      '</div>' +
+      '<div class="card">' + rows + '</div>' +
+      '<div style="margin-top:14px">' + fixtureNote(
+        '<b>Notes are stored fixtures</b> and nothing is transmitted. The outreach generator and its message-type ' +
+        'catalogue are not included in the public build, and this demo has no ability to send email.') + '</div>';
+  }
+
+  /* ---------- 7. Interview ------------------------------------------------ */
+
+  function renderInterview() {
+    var j = selectedJob();
+    var upcoming = state.data.events.filter(function (e) { return !e.completed; });
+    var past = state.data.events.filter(function (e) { return e.completed; });
+
+    function evRow(e) {
+      var jb = job(e.job_id);
+      return '<div class="row"><div class="row-main">' +
+        '<div class="row-title">' + esc(e.title) + '</div>' +
+        '<div class="row-sub">' + esc(e.notes) + '</div></div>' +
+        '<div class="row-actions"><span class="when' + (e.completed ? '' : ' soon') + '">' +
+        esc(e.date) + ' ' + esc(e.time) + '</span></div></div>';
+    }
+
+    var themes = j.themes.length
+      ? j.themes.map(function (t) {
+          var s = t.story ? story(t.story) : null;
+          return '<div class="row"><div class="row-main">' +
+            '<div class="row-title">' + esc(t.q) + '</div>' +
+            '<div class="row-sub">' + (s ? 'Prepared story: ' + esc(s.title) : 'No prepared story — answer directly and briefly.') +
+            '</div></div></div>';
+        }).join('')
+      : '<p class="empty">No interview themes prepared for ' + esc(j.company) + '.</p>';
+
+    var stories = state.data.stories.map(function (s) {
+      var open = state.openStory === s.id;
+      return '<div class="story' + (open ? ' open' : '') + '">' +
+        '<button class="story-head" data-act="story" data-id="' + s.id + '" aria-expanded="' + open + '">' +
+          '<span class="caret" aria-hidden="true">▶</span>' +
+          '<span class="t"><span class="story-title">' + esc(s.title) + '</span>' +
+          '<span class="story-metric">' + esc(s.metric) + '</span></span></button>' +
+        '<div class="story-body">' +
+          starPart('Situation', s.situation) + starPart('Task', s.task) +
+          starPart('Action', s.action) + starPart('Result', s.result) +
+          '<div class="skillrow" style="margin-top:12px">' +
+            s.tags.map(function (t) { return '<span class="tag">' + esc(t) + '</span>'; }).join('') +
+          '</div></div></div>';
+    }).join('');
+
+    return panelHead('Step 7 of 8', 'Interview',
+      'Scheduled conversations, the themes each employer is likely to probe, and the STAR stories prepared ' +
+      'against them. Expand a story to see the full structure.') +
+      '<div class="grid grid-side">' +
+        '<div><div class="card" style="margin-bottom:14px"><div class="card-label">Upcoming</div>' +
+          (upcoming.length ? upcoming.map(evRow).join('') : '<p class="empty">Nothing scheduled.</p>') +
+        '</div>' +
+        '<div class="card"><div class="card-label">Completed</div>' + past.map(evRow).join('') + '</div></div>' +
+        '<div><div class="card" style="margin-bottom:14px">' +
+          '<div class="card-label">Likely themes — ' + esc(j.company) + '</div>' + themes + '</div>' +
+          fixtureNote('<b>Stories and themes are stored fixtures.</b> The question bank, practice mode with ' +
+            'scoring, and the cheat-sheet builder are not included in the public build.') +
+        '</div>' +
+      '</div>' +
+      '<h3 style="margin:22px 0 11px;font-size:17px">Prepared STAR stories</h3>' + stories;
+  }
+
+  function starPart(key, text) {
+    return '<div class="star-part"><div class="star-key">' + key + '</div><p>' + esc(text) + '</p></div>';
+  }
+
+  /* ---------- 8. Measure -------------------------------------------------- */
+
+  function kpi(v, label, detail) {
+    return '<div class="kpi"><div class="kpi-v">' + v + '</div><div class="kpi-l">' + label + '</div>' +
+      (detail ? '<div class="kpi-d">' + detail + '</div>' : '') + '</div>';
+  }
+
+  function renderMeasure() {
+    var jobs = state.data.jobs;
+    var appliedPlus = jobs.filter(function (j) { return j.status !== 'saved'; });
+    var responded = jobs.filter(function (j) {
+      return ['screening', 'interview', 'offer', 'rejected'].indexOf(j.status) > -1;
+    });
+    var rate = appliedPlus.length ? Math.round(responded.length / appliedPlus.length * 100) : 0;
+    var offers = jobs.filter(function (j) { return j.status === 'offer'; }).length;
+    var active = jobs.filter(function (j) {
+      return ['applied', 'screening', 'interview', 'offer'].indexOf(j.status) > -1;
+    });
+    var avgDays = active.length
+      ? Math.round(active.reduce(function (a, j) { return a + j.days_in_stage; }, 0) / active.length)
+      : 0;
+
+    var max = Math.max.apply(null, STAGES.map(function (st) {
+      return jobs.filter(function (j) { return j.status === st.k; }).length;
+    })) || 1;
+
+    var funnel = STAGES.map(function (st) {
+      var n = jobs.filter(function (j) { return j.status === st.k; }).length;
+      return '<div class="fstep"><span class="fstep-l">' + st.label + '</span>' +
+        '<span class="fstep-bar"><i style="width:' + Math.round(n / max * 100) + '%"></i></span>' +
+        '<span class="fstep-n">' + n + '</span></div>';
+    }).join('');
+
+    var bySource = {};
+    jobs.forEach(function (j) { bySource[j.source] = (bySource[j.source] || 0) + 1; });
+    var sourceRows = Object.keys(bySource).sort(function (a, b) { return bySource[b] - bySource[a]; })
+      .map(function (s) {
+        return '<div class="row" style="padding:8px 0"><div class="row-main"><div class="row-title" ' +
+          'style="font-size:13px">' + esc(s) + '</div></div><div class="row-actions">' +
+          '<span class="days">' + bySource[s] + ' role' + (bySource[s] > 1 ? 's' : '') + '</span></div></div>';
+      }).join('');
+
+    return panelHead('Step 8 of 8', 'Measure',
+      'The numbers recalculate from whatever you did in the previous steps. Advance a role in Pipeline and this ' +
+      'page changes — that is the whole argument for tracking the search in one place.') +
+      '<div class="kpis">' +
+        kpi(jobs.length, 'Roles tracked', 'Including deliberate passes.') +
+        kpi(rate + '%', 'Response rate', responded.length + ' of ' + appliedPlus.length + ' past saved.') +
+        kpi(offers, 'Offers', offers ? 'Kestrel Financial, verbal.' : 'None yet.') +
+        kpi(avgDays + 'd', 'Avg time in stage', 'Across ' + active.length + ' live roles.') +
+      '</div>' +
+      '<div class="grid grid-side">' +
+        '<div class="card"><div class="card-label">Pipeline funnel</div><div class="funnel">' + funnel + '</div>' +
+          '<p style="font-size:12.5px;color:var(--warm-700);margin-top:14px;line-height:1.6">' +
+          'Closed roles stay counted. A funnel that deletes its losses cannot tell you whether the strategy is ' +
+          'working — it only tells you how the survivors are doing.</p></div>' +
+        '<div><div class="card" style="margin-bottom:14px"><div class="card-label">Where roles came from</div>' +
+          sourceRows + '</div>' +
+          fixtureNote('<b>Computed live from demo state</b> — these four numbers and the funnel are simple ' +
+            'arithmetic over the fictional dataset, not stored values. Diagnostics and reporting exports are not ' +
+            'included in the public build.') +
+        '</div>' +
+      '</div>';
+  }
+
+  /* ---------- shell ------------------------------------------------------- */
+
+  function panelHead(eyebrow, title, lede) {
+    return '<div class="panel-head"><div class="panel-eyebrow">' + eyebrow + '</div>' +
+      '<h2>' + title + '</h2><p>' + lede + '</p></div>';
+  }
+
+  var RENDERERS = {
+    discover: renderDiscover, score: renderScore, pipeline: renderPipeline, tailor: renderTailor,
+    bundle: renderBundle, followup: renderFollowUp, interview: renderInterview, measure: renderMeasure
+  };
+
+  function renderRail() {
+    document.getElementById('flowrail').innerHTML = STEPS.map(function (s) {
+      return '<button class="flowstep" data-act="go" data-v="' + s.k + '"' +
+        (state.step === s.k ? ' aria-current="step"' : '') + '>' +
+        '<span class="n">' + s.n + '</span>' + s.label + '</button>';
+    }).join('');
+  }
+
+  function render() {
+    renderRail();
+    var stage = document.getElementById('stage');
+    stage.innerHTML = '<section class="panel active" id="panel-' + state.step +
+      '" aria-label="' + state.step + '">' + RENDERERS[state.step]() + '</section>';
+    document.title = 'CareerOS Demo — ' +
+      STEPS.filter(function (s) { return s.k === state.step; })[0].label + ' (Fictional Data)';
+  }
+
+  function go(step) {
+    if (!RENDERERS[step]) return;
+    state.step = step;
+    render();
+    window.scrollTo({ top: 0, behavior: 'auto' });
+  }
+
+  function advance(id) {
+    var j = job(id);
+    if (!j) return;
+    var i = STAGE_ORDER.indexOf(j.status);
+    if (i < 0 || i >= STAGE_ORDER.length - 1) return;
+    j.status = STAGE_ORDER[i + 1];
+    j.days_in_stage = 0;
+    render();
+    toast(j.company + ' moved to ' + stageLabel(j.status));
+  }
+
+  function reset() {
+    state = freshState();
+    render();
+    toast('Demo reset to its starting state');
+  }
+
+  /* ---------- events ------------------------------------------------------ */
+
+  function handle(e) {
+    var el = e.target.closest ? e.target.closest('[data-act]') : null;
+    if (!el) return;
+    var act = el.getAttribute('data-act');
+    var id = el.getAttribute('data-id');
+    var v = el.getAttribute('data-v');
+
+    if (act === 'advance') { e.stopPropagation(); advance(id); return; }
+    if (act === 'pick') { state.selected = id; state.step === 'discover' ? go('score') : render(); return; }
+    if (act === 'go') { go(v); return; }
+    if (act === 'work') { state.workFilter = v; render(); return; }
+    if (act === 'sort') { state.sort = v; render(); return; }
+    if (act === 'floor') { state.floorOnly = !state.floorOnly; render(); return; }
+    if (act === 'follow') {
+      state.followedUp[id] = true; render();
+      toast('Follow-up marked sent (nothing was transmitted)');
+      return;
+    }
+    if (act === 'story') { state.openStory = state.openStory === id ? null : id; render(); return; }
+    if (act === 'reset') { reset(); return; }
+    if (act === 'copy') { copyContact(el); return; }
+  }
+
+  function copyContact(el) {
+    var text = el.getAttribute('data-copy') || '';
+    function done() { toast('Copied: ' + text); }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(done, function () { toast(text); });
+    } else {
+      toast(text);
+    }
+  }
+
+  /* Verification hook: a stable fingerprint of demo state, used by the
+     automated checks to prove Reset Demo is deterministic. */
+  window.__demoFingerprint = function () {
+    return JSON.stringify({
+      step: state.step, selected: state.selected, work: state.workFilter,
+      floor: state.floorOnly, sort: state.sort, openStory: state.openStory,
+      followedUp: Object.keys(state.followedUp).sort(),
+      jobs: state.data.jobs.map(function (j) { return [j.id, j.status, j.days_in_stage]; })
+    });
+  };
+
+  document.addEventListener('DOMContentLoaded', function () {
+    state = freshState();
+    document.addEventListener('click', handle);
+    document.addEventListener('keydown', function (e) {
+      if ((e.key === 'Enter' || e.key === ' ') && e.target.getAttribute &&
+          e.target.getAttribute('data-act') === 'advance') {
+        e.preventDefault(); handle(e);
+      }
+    });
+    render();
+  });
+})();
+
+</script>
+</body>
+</html>
